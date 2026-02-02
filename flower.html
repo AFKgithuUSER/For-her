@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midnight Glow Hydrangea 🌙✨</title>
+    <style>
+        :root {
+            --bg-dark: #050510;
+            --blue-glow: #4dabff;
+            --stem-green: #1a3c26;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at center, #101a30 0%, #050510 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Palatino', 'Georgia', serif;
+        }
+
+        .canvas {
+            position: relative;
+            width: 400px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Animated Stem */
+        .stem-box {
+            position: absolute;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .stem-path {
+            fill: none;
+            stroke: var(--stem-green);
+            stroke-width: 4;
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: grow 3s ease-in-out forwards;
+        }
+
+        /* The Flower Cluster */
+        #hydrangea-head {
+            position: absolute;
+            top: 60px;
+            width: 250px;
+            height: 250px;
+            z-index: 10;
+        }
+
+        .floret {
+            position: absolute;
+            opacity: 0;
+            transform: scale(0);
+            filter: drop-shadow(0 0 8px rgba(77, 171, 255, 0.5));
+            animation: bloom 1.5s cubic-bezier(0.17, 0.67, 0.59, 1.2) forwards;
+        }
+
+        .petal {
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 0.5;
+        }
+
+        /* Sparkle animation for the centers */
+        .center-glow {
+            fill: #fff;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(1px);
+            animation: float 6s infinite ease-in-out;
+        }
+
+        h1 {
+            color: #a0d8ff;
+            font-weight: 300;
+            font-size: 1.5rem;
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeIn 3s forwards 4s;
+            text-shadow: 0 0 15px var(--blue-glow);
+        }
+
+        @keyframes grow { to { stroke-dashoffset: 0; } }
+
+        @keyframes bloom {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); filter: blur(2px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="canvas">
+        <svg class="stem-box" width="100" height="250" viewBox="0 0 100 200">
+            <path class="stem-path" d="M50,200 C55,150 45,100 50,50" />
+            <path d="M50,150 Q70,140 80,120 Q60,110 50,150" fill="#143220" opacity="0">
+                <animate attributeName="opacity" from="0" to="1" dur="2s" begin="2s" fill="freeze" />
+            </path>
+            <path d="M50,130 Q30,120 20,100 Q40,90 50,130" fill="#143220" opacity="0">
+                <animate attributeName="opacity" from="0" to="1" dur="2s" begin="2.5s" fill="freeze" />
+            </path>
+        </svg>
+
+        <div id="hydrangea-head"></div>
+    </div>
+
+    <h1>Every bloom is how much I love you ✨💙</h1>
+
+    <script>
+        const head = document.getElementById('hydrangea-head');
+        const count = 75;
+
+        // Create background floating stars/particles
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.width = p.style.height = Math.random() * 3 + 'px';
+            p.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(p);
+        }
+
+        for (let i = 0; i < count; i++) {
+            const f = document.createElement('div');
+            f.className = 'floret';
+            
+            // Spiral math for a perfect hydrangea head
+            const angle = i * 0.5;
+            const dist = Math.sqrt(i) * 14; 
+            const x = Math.cos(angle) * dist + 110;
+            const y = Math.sin(angle) * dist * 0.9 + 100;
+            
+            f.style.left = `${x}px`;
+            f.style.top = `${y}px`;
+            f.style.animationDelay = `${0.5 + (i * 0.05)}s`; // Staggered bloom
+            
+            const hue = 200 + Math.random() * 30;
+            const brightness = 40 + Math.random() * 30;
+
+            f.innerHTML = `
+                <svg width="50" height="50" viewBox="0 0 50 50">
+                    <g transform="rotate(${Math.random() * 90} 25 25)">
+                        <path class="petal" d="M25,25 Q35,10 45,25 Q35,40 25,25" fill="hsl(${hue}, 80%, ${brightness}%)" />
+                        <path class="petal" d="M25,25 Q10,15 5,25 Q10,35 25,25" fill="hsl(${hue}, 80%, ${brightness-10}%)" />
+                        <path class="petal" d="M25,25 Q15,45 25,45 Q35,45 25,25" fill="hsl(${hue}, 80%, ${brightness-5}%)" />
+                        <path class="petal" d="M25,25 Q15,5 25,5 Q35,5 25,25" fill="hsl(${hue}, 80%, ${brightness+5}%)" />
+                        <circle class="center-glow" cx="25" cy="25" r="1.5" />
+                    </g>
+                </svg>
+            `;
+            head.appendChild(f);
+        }
+    </script>
+</body>
+</html>

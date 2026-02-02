@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Can I Ask You Something? 💙</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #101a30 0%, #050510 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* --- BACKGROUND STARS --- */
+    .bg-star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.2;
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
+
+    /* Animation for the stars when they react to "Yes" */
+    .star-react {
+      transform: scale(3) !important;
+      opacity: 1 !important;
+      background: #4dabff !important;
+      box-shadow: 0 0 10px #4dabff;
+    }
+
+    /* --- CARD STYLES --- */
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 30px 20px;
+      border-radius: 20px;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 10;
+    }
+
+    .heart {
+      font-size: 60px;
+      animation: beat 1s infinite;
+      color: #4dabff;
+      text-shadow: 0 0 20px #4dabff;
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px; 
+      min-height: 100px;
+    }
+
+    button {
+      padding: 12px 25px;
+      border-radius: 25px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      min-width: 100px;
+      user-select: none;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+      position: relative;
+    }
+
+    .yes {
+      background: #4dabff;
+      color: white;
+      box-shadow: 0 0 15px rgba(77, 171, 255, 0.4);
+      z-index: 15;
+    }
+
+    .no {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      z-index: 10;
+    }
+
+    /* Local Burst Stars */
+    .burst-star {
+      position: absolute;
+      background: #fff;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @keyframes flyOut {
+      to {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+      }
+    }
+
+    #response {
+      margin-top: 20px;
+      font-size: 15px;
+      font-style: italic;
+      color: #a0d8ff;
+      min-height: 25px;
+    }
+  </style>
+</head>
+<body onload="initBackground()">
+
+  <div class="card">
+    <div class="heart">💙</div>
+    <h1>Hey… I have something to ask</h1>
+    <p><br><strong>Would you like to go out with me? ✨</strong></p>
+
+    <div class="buttons">
+      <button class="yes" id="yesBtn" onclick="sayYes()">Yes 😊</button>
+      <button class="no" id="noBtn" onclick="shrinkNo()">No 😅</button>
+    </div>
+
+    <div id="response"></div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const responseText = document.getElementById("response");
+
+    let yesScale = 1;
+    let noScale = 1;
+
+    function initBackground() {
+      for (let i = 0; i < 120; i++) {
+        const star = document.createElement('div');
+        star.className = 'bg-star';
+        const size = Math.random() * 3 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 100 + 'vh';
+        document.body.appendChild(star);
+      }
+    }
+
+    function createBurst(element) {
+      for (let i = 0; i < 15; i++) {
+        const star = document.createElement('div');
+        star.className = 'burst-star';
+        const x = (Math.random() - 0.5) * 200 + 'px';
+        const y = (Math.random() - 0.5) * 200 + 'px';
+        star.style.setProperty('--x', x);
+        star.style.setProperty('--y', y);
+        star.style.left = '50%';
+        star.style.top = '50%';
+        star.style.animation = `flyOut ${Math.random() * 0.5 + 0.3}s ease-out forwards`;
+        element.appendChild(star);
+        setTimeout(() => star.remove(), 800);
+      }
+    }
+
+    function reactStars() {
+      const stars = document.querySelectorAll('.bg-star');
+      stars.forEach(star => {
+        star.classList.add('star-react');
+        // Remove the reaction after a moment so it pulses
+        setTimeout(() => {
+          star.classList.remove('star-react');
+        }, 600);
+      });
+    }
+
+    function shrinkNo() {
+      yesScale += 0.35;
+      yesBtn.style.transform = `scale(${yesScale})`;
+      createBurst(noBtn); 
+
+      if (noScale > 0.3) {
+        noScale -= 0.12;
+        noBtn.style.transform = `scale(${noScale})`;
+      }
+
+      const sentences = ["Wait, really? 🥺", "Wrong button! 😭", "Look at the stars! ✨", "Try again? 🙏"];
+      responseText.innerText = sentences[Math.floor(Math.random() * sentences.length)];
+    }
+
+    function sayYes() {
+      createBurst(yesBtn);
+      reactStars(); // Make the background stars flash!
+
+      yesBtn.style.boxShadow = "0 0 50px #4dabff";
+      noBtn.style.opacity = "0.4"; // No button stays, but fades
+      
+      yesBtn.onclick = null; 
+      noBtn.onclick = null;
+
+      responseText.innerText = "You just made my day! ✨💙";
+      
+      setTimeout(() => { 
+        window.location.href = "flower.html"; 
+      }, 2000);
+    }
+
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      shrinkNo();
+    });
+  </script>
+</body>
+</html>
